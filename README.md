@@ -4,6 +4,7 @@ Code for our paper A Solution for Mobile Manipulator Throwing
 
 accepted in International Conference on Intelligent Robots and Systems (IROS) 2022.
 
+![alt text](https://github.com/liuyangdh/mobile-throwing/blob/main/docs/figs/throw-demo.gif)
 
 ## Instruction to run the simulation
 ### Build the docker image
