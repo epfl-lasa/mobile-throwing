@@ -1,16 +1,22 @@
-# Throwing simulation
+# Mobile Manipulator Throwing
 
-## Build the docker image
+Code for our paper A Solution for Mobile Manipulator Throwing 
+
+accepted in International Conference on Intelligent Robots and Systems (IROS) 2022.
+
+
+## Instruction to run the simulation
+### Build the docker image
 ```bash
 bash build-docker.sh
 ```
 
-## Enter the docker container
+###  Enter the docker container
 ```bash
 bash run-docker.sh
 ```
 
-## Inside the docker container, run the throwing simulation
+### Inside the docker container, run the throwing simulation
 ```bash
 python3 ms1_demo_mobile_manipulator_throw.py --box_x -3 --box_y 3 --box_z 0.5
 ```
