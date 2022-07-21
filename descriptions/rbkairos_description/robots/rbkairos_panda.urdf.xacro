@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot name="rbkairos" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <!-- ***************** -->
+  <!-- Imported elements -->
+  <!-- ***************** -->
+
+  <!-- First we import all posible elements defined in the urdf.xacro files. All these elements are defined as macro:xacros -->
+  <xacro:arg name="prefix" default="robot"/>
+  <xacro:arg name="ros_planar_move_plugin" default="false"/>
+
+
+  <!-- Import summit XL base elements -->
+  <xacro:include filename="$(find rbkairos_description)/urdf/bases/rbkairos_base.urdf.xacro"/>
+  <xacro:include filename="$(find franka_panda_description)/robots/panda_arm.xacro"/>
+
+  <xacro:rbkairos_base prefix="$(arg prefix)" publish_bf="true" hq="true"/>
+  <xacro:panda_arm connected_to="robotbase_chapa" rpy="0 0 1.5708"/>
+
+  <xacro:ros_control/>
+
+  <xacro:if value="$(arg ros_planar_move_plugin)">
+    <xacro:omni_steering prefix="$(arg prefix)" publish_tf="true"/>
+  </xacro:if>
+</robot>

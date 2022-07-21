@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<robot name="sensor_sick_nanoscan3"
+	xmlns:xacro="http://wiki.ros.org/xacro">
+
+	<xacro:macro name="sensor_sick_nanoscan3" params="prefix parent prefix_topic:='front_laser' *origin max_angle:=2.3998 min_angle:=-2.3998 gpu:=^|true">
+
+		<joint name="${prefix}_base_joint" type="fixed">
+			<xacro:insert_block name="origin" />
+			<parent link="${parent}"/>
+			<child link="${prefix}_base_link"/>
+		</joint>
+
+		<link name="${prefix}_base_link">
+			<collision>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<!--<box size="0.106 0.094 0.152"/>-->
+					<!--<cylinder radius="0.058" length="0.152"/>-->
+					<mesh filename="package://robotnik_sensors/meshes/sick_nanoscan3.stl"/>
+				</geometry>
+			</collision>
+
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="package://robotnik_sensors/meshes/sick_nanoscan3.stl"/>
+				</geometry>
+			</visual>
+
+			<inertial>
+				<mass value="0.67" />
+				<origin xyz="0 0 0.04" rpy="0 0 0"/> 
+				<xacro:solid_cuboid_inertia m="0.67" w="0.1006" h="0.1006" d="0.08" /> <!-- Datasheet dimensional drawing: 100.6 mm x 100.6 mm x 80 mm without connectors --> 
+			</inertial>
+		</link>
+
+		<joint name="${prefix}_joint" type="fixed">
+			<parent link="${prefix}_base_link"/>
+			<child link="${prefix}_link"/>
+			<origin xyz="0.0 0 0.0505" rpy="0 0 0"/>
+		</joint>
+
+		<link name="${prefix}_link" />
+
+		<!-- Sick sensor sensor for simulation -->
+		<sensor_sick_nanoscan3_gazebo />
+
+	</xacro:macro>
+
+	<xacro:macro name="sensor_sick_nanoscan3_gazebo">
+		<gazebo reference="${prefix}_link">
+
+			<xacro:if value="${gpu}">
+				<xacro:property name="ray_type" value="gpu_ray" />
+				<xacro:property name="plugin_lib" value="libgazebo_ros_gpu_laser.so" />
+			</xacro:if>
+			<xacro:unless value="${gpu}">
+				<xacro:property name="ray_type" value="ray" />
+				<xacro:property name="plugin_lib" value="libgazebo_ros_laser.so" />
+			</xacro:unless>
+
+			<sensor type="${ray_type}" name="${prefix}_sensor">
+				<pose>0 0 0 0 0 0</pose>
+				<visualize>false</visualize>
+				<update_rate>12.5</update_rate>
+				<ray>
+					<scan>
+						<horizontal>
+							<samples>1618</samples>
+							<resolution>1</resolution>
+							<min_angle>${min_angle}</min_angle>
+							<max_angle>${max_angle}</max_angle>
+						</horizontal>
+					</scan>
+					<range>
+						<min>0.065</min>
+						<max>40.0</max> <!-- 3m protective, 10 warning, 40 measurement -->
+						<resolution>0.07</resolution> <!-- Resolution is configurable 20 mm 30 mm 40 mm 50 mm 60 mm 70 mm 150 mm 200 mm, reglamentary resolution is 70 mm -->
+					</range>
+					<noise>
+						<type>gaussian</type>
+						<mean>0.0</mean>
+						<stddev>0.03</stddev>
+					</noise>
+				</ray>
+				<plugin name="${prefix}_controller" filename="${plugin_lib}">
+					<topicName>${prefix_topic}/scan</topicName>
+					<frameName>/${prefix}_link</frameName>					<!-- if not global (leading /) sets the current namespace as a prefix (/ns/name_laser_link) -->
+				</plugin>
+			</sensor>
+		</gazebo>
+	</xacro:macro>
+
+</robot>

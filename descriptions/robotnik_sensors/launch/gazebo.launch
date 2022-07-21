@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Simulation arguments -->
+  <arg name="robot_id" default="$(optenv ROBOT_ID sensor)"/>
+  <arg name="world_name" default="$(find gazebo_ros)/worlds/empty_world.world"/>
+  <arg name="debug" default="false"/>
+  <arg name="paused" default="false"/>
+  <arg name="headless" default="false"/>
+  <arg name="gui" default="true"/>
+
+  <!-- Sensor configuration -->
+  <arg name="x_init_pose" default="0"/>
+  <arg name="y_init_pose" default="0"/>
+  <arg name="z_init_pose" default="1"/>
+
+  <!-- Launch gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world_name)"/>
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="paused" value="$(arg paused)" />
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+  
+  <!-- Spawn model into gazebo -->
+  <node name="urdf_spawner_robot_model" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+    args="
+    -x $(arg x_init_pose) 
+    -y $(arg y_init_pose) 
+    -z $(arg z_init_pose) 
+    -urdf -param robot_description 
+    -model $(arg robot_id)
+    -unpause
+    " />
+
+</launch>

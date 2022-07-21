@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:macro name="stereo_camera"
+    params="prefix fps baseline hfov width height format near far">
+
+    <gazebo reference="${prefix}_base_link">
+      <visual>  
+        <material>  
+          <ambient>0.35 0.35 0.35 1.0</ambient>  
+          <diffuse>0.350754 0.350754 0.350754 1.0</diffuse>  
+          <specular>0.308273 0.3508273 0.3508273 1.0</specular>  
+          <emissive>0.0 0.0 0.0 0.0</emissive>  
+        </material>  
+      </visual>  
+      <sensor type="multicamera" name="stereo_camera">
+        <update_rate>${fps}</update_rate>
+        <camera name="left">
+          <pose>0 0 0 0 0 0 </pose>
+          <horizontal_fov>${hfov}</horizontal_fov>
+          <image>
+            <width>${width}</width>
+            <height>${height}</height>
+            <format>${format}</format>
+          </image>
+          <clip>
+            <near>${near}</near>
+            <far>${far}</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+        <camera name="right">
+          <pose>${baseline} 0 0 0 0 0</pose>
+          <horizontal_fov>${hfov}</horizontal_fov>
+          <image>
+            <width>${width}</width>
+            <height>${height}</height>
+            <format>${format}</format>
+          </image>
+          <clip>
+            <near>${near}</near>
+            <far>${far}</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+        <plugin name="stereo_camera_controller" filename="libgazebo_ros_multicamera.so">
+          <alwaysOn>true</alwaysOn>
+          <cameraName>${prefix}</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>${prefix}_base_link</frameName>
+          <hackBaseline>${baseline}</hackBaseline>
+          <!-- NOTE: Distortion is currently unused -->
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+          <ignoreTfPrefix>1</ignoreTfPrefix>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="stereolabs_zed"
+    params="prefix:=zed parent *origin model:=zed format:=R8G8B8 near:=0.05 far:=2500">
+
+    <xacro:if value="${model == 'zed'}">
+        <xacro:property name="baseline" value="0.12" />
+    </xacro:if>
+    <xacro:if value="${model == 'zedm'}">
+        <xacro:property name="baseline" value="0.06" />
+    </xacro:if>
+    <xacro:if value="${model == 'zed2'}">
+        <xacro:property name="baseline" value="0.12" />
+    </xacro:if>
+
+    <joint name="${prefix}_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${prefix}_base_link" />
+    </joint>
+
+    <link name="${prefix}_base_link">
+       <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robotnik_sensors/meshes/${model}.stl"/>
+        </geometry>
+        <material name="light_zed_grey">
+          <color rgba="0.35 0.35 0.35 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://robotnik_sensors/meshes/${model}.stl" />
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.135" />
+        <origin xyz="0 0 0" />
+        <xacro:solid_cuboid_inertia m="0.135" w="0.033" h="0.175" d="0.03" />
+      </inertial>
+    </link>
+   <!-- Center camera -->
+   <joint name="${prefix}_camera_center_joint" type="fixed">
+        <parent link="${prefix}_base_link"/>
+        <child link="${prefix}_camera_center"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    </joint>
+
+   <link name="${prefix}_camera_center"/>
+
+
+   <!-- Left camera -->
+    <joint name="${prefix}_camera_left_joint" type="fixed">
+        <origin xyz="0 ${baseline/2} 0" rpy="0 0 0" />
+      <parent link="${prefix}_camera_center" />
+      <child link="${prefix}_left_camera_frame" />
+    </joint>
+
+    <link name="${prefix}_left_camera_frame"/>
+
+    <joint name="${prefix}_camera_left_optical_joint" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="${-M_PI/2} 0.0 ${-M_PI/2}" />
+      <parent link="${prefix}_left_camera_frame" />
+      <child link="${prefix}_left_camera_optical_frame" />
+    </joint>
+
+    <link name="${prefix}_left_camera_optical_frame"/>
+
+    <!-- Right camera-->
+    <joint name="${prefix}_camera_right_joint" type="fixed">
+      <origin xyz="0 -${baseline/2} 0" rpy="0 0 0" />
+      <parent link="${prefix}_camera_center" />
+      <child link="${prefix}_right_camera_frame" />
+    </joint>
+
+    <link name="${prefix}_right_camera_frame"/>
+
+    <joint name="${prefix}_camera_right_optical_joint" type="fixed">
+      <origin xyz="0.0 0 0.0" rpy="${-M_PI/2} 0.0 ${-M_PI/2}" />
+      <parent link="${prefix}_right_camera_frame" />
+      <child link="${prefix}_right_camera_optical_frame" />
+    </joint>
+
+    <link name="${prefix}_right_camera_optical_frame"/>
+
+      <xacro:stereo_camera
+        prefix="${prefix}"
+        hfov="1.2217"
+        baseline="${baseline}"
+        fps="40"
+        width="640"
+        height="480"
+        format="${format}"
+        near="${near}"
+        far="${far}"/>
+  </xacro:macro>
+
+  <xacro:macro name="sensor_zed" params="prefix:=myzed parent *origin model:=zed" >
+    <stereolabs_zed prefix="${prefix}" parent="${parent}" model="${model}">
+      <xacro:insert_block name="origin" />
+    </stereolabs_zed>
+  </xacro:macro>
+
+</robot>

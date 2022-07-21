@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="vacuum_gripper">
+   <gazebo>
+     <plugin name="gazebo_ros_vacuum_cup_1" filename="libgazebo_ros_vacuum_gripper.so">
+       <robotNamespace>/robot</robotNamespace>
+       <bodyName>robot_vgc10_vacuum_cup_1_link</bodyName>
+       <topicName>vacuum_cup_1</topicName>
+       <serviceNamespace>vacuum_cup_1</serviceNamespace>
+     </plugin>
+   </gazebo>
+
+   <gazebo>
+     <plugin name="gazebo_ros_vacuum_cup_2" filename="libgazebo_ros_vacuum_gripper.so">
+       <robotNamespace>/robot</robotNamespace>
+       <bodyName>robot_vgc10_vacuum_cup_2_link</bodyName>
+       <topicName>vacuum_cup_2</topicName>
+       <serviceNamespace>vacuum_cup_2</serviceNamespace>
+     </plugin>
+   </gazebo>
+
+   <gazebo>
+     <plugin name="gazebo_ros_vacuum_cup_3" filename="libgazebo_ros_vacuum_gripper.so">
+       <robotNamespace>/robot</robotNamespace>
+       <bodyName>robot_vgc10_vacuum_cup_3_link</bodyName>
+       <topicName>vacuum_cup_3</topicName>
+       <serviceNamespace>vacuum_cup_3</serviceNamespace>
+     </plugin>
+   </gazebo>
+
+   <gazebo>
+     <plugin name="gazebo_ros_vacuum_cup_4" filename="libgazebo_ros_vacuum_gripper.so">
+       <robotNamespace>/robot</robotNamespace>
+       <bodyName>robot_vgc10_vacuum_cup_4_link</bodyName>
+       <topicName>vacuum_cup_4</topicName>
+       <serviceNamespace>vacuum_cup_4</serviceNamespace>
+     </plugin>
+   </gazebo>
+  </xacro:macro>
+
+</robot>

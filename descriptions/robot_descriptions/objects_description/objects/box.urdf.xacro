@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="table" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:arg name="prefix" default="box_"/>
+  <xacro:arg name="connected_to" default=""/>
+  <xacro:arg name="xyz" default="'0 0 0'"/>
+  <xacro:arg name="rpy" default="'0 0 0'"/>
+  <xacro:arg name="height" default="0.15"/>
+  <xacro:arg name="width" default="0.5"/>
+  <xacro:arg name="depth" default="0.5"/>
+
+  <xacro:include filename="$(find objects_description)/objects/box.xacro"/>
+
+  <xacro:box prefix="$(arg prefix)" connected_to="$(arg connected_to)" xyz="$(arg xyz)" rpy="$(arg rpy)"
+             height="$(arg height)" width="$(arg width)" depth="$(arg depth)"/>
+
+</robot>

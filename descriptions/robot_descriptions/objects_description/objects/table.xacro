@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<robot name="table" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:macro name="table"
+               params="prefix='table_' connected_to:='' xyz:='0 0 0' rpy:='0 0 0' height:=0.6 width:=0.5 depth=1.0">
+
+    <xacro:property name="table_top_thickness" value="0.05"/>
+    <xacro:property name="leg_radius" value="0.02"/>
+    <xacro:property name="leg_length" value="${height - table_top_thickness}"/>
+
+    <material name="brown">
+      <color rgba="0.59 0.29 0 1"/>
+    </material>
+
+    <xacro:if value="${connected_to == ''}">
+      <link name="world"/>
+      <xacro:property name="base_frame_name" value="world"/>
+    </xacro:if>
+    <xacro:unless value="${connected_to == ''}">
+      <xacro:property name="base_frame_name" value="${connected_to}"/>
+    </xacro:unless>
+    <link name="${base_frame_name}"/>
+    <joint name="${prefix}base_to_${base_frame_name}" type="fixed">
+      <parent link="${base_frame_name}"/>
+      <child link="${prefix}base_link"/>
+      <origin rpy="${rpy}" xyz="${xyz}"/>
+    </joint>
+
+    <link name="${prefix}base_link"/>
+    <joint name="base_to_top" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <origin xyz="0 0 ${height}"/>
+      <child link="${prefix}top_link"/>
+    </joint>
+
+    <!-- tabletop height is .55+.01+.025=.585 -->
+    <link name="${prefix}top_link">
+      <inertial>
+        <mass value="10.0"/>
+        <origin xyz="0 0 ${-table_top_thickness/2}"/>
+        <inertia ixx="1" ixy="0" ixz="0"
+                 iyy="1" iyz="0" izz="1"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 ${-table_top_thickness/2}"/>
+        <geometry>
+          <box size="${width} ${depth} ${table_top_thickness}"/>
+        </geometry>
+        <material name="brown"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${-table_top_thickness/2}"/>
+        <geometry>
+          <box size="${width} ${depth} ${table_top_thickness}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}leg1_joint" type="fixed">
+      <parent link="${prefix}top_link"/>
+      <origin xyz="${width/2 - leg_radius} ${depth/2 - leg_radius} ${-table_top_thickness}"
+              rpy="0 0 0"/>
+      <child link="${prefix}leg1_link"/>
+    </joint>
+    <link name="${prefix}leg1_link">
+      <inertial>
+        <mass value="1.0"/>
+        <origin xyz="0 0 ${-leg_length/2}"/>
+        <inertia ixx="0.1" ixy="0" ixz="0"
+                 iyy="0.1" iyz="0"
+                 izz="0.01"/>
+      </inertial>
+      <visual>
+        <origin xyz="0.0 0.0 ${-leg_length/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${leg_radius}" length="${leg_length}"/>
+        </geometry>
+        <material name="brown"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 ${-leg_length/2}" rpy="0.0 0.0 0.0"/>
+        <geometry>
+          <cylinder radius="${leg_radius}" length="${leg_length}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}leg2_joint" type="fixed">
+      <parent link="${prefix}top_link"/>
+      <origin xyz="${width/2 - leg_radius} -${depth/2 - leg_radius} ${-table_top_thickness}"
+              rpy="0 0 0"/>
+      <child link="${prefix}leg2_link"/>
+    </joint>
+    <link name="${prefix}leg2_link">
+      <inertial>
+        <mass value="1.0"/>
+        <origin xyz="0 0 ${-leg_length/2}"/>
+        <inertia ixx="0.1" ixy="0" ixz="0"
+                 iyy="0.1" iyz="0"
+                 izz="0.01"/>
+      </inertial>
+      <visual>
+        <origin xyz="0.0 0.0 ${-leg_length/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${leg_radius}" length="${leg_length}"/>
+        </geometry>
+        <material name="brown"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 ${-leg_length/2}" rpy="0.0 0.0 0.0"/>
+        <geometry>
+          <cylinder radius="${leg_radius}" length="${leg_length}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}leg3_joint" type="fixed">
+      <parent link="${prefix}top_link"/>
+      <origin xyz="-${width/2 - leg_radius} -${depth/2 - leg_radius} ${-table_top_thickness}"
+              rpy="0 0 0"/>
+      <child link="${prefix}leg3_link"/>
+    </joint>
+    <link name="${prefix}leg3_link">
+      <inertial>
+        <mass value="1.0"/>
+        <origin xyz="0 0 ${-leg_length/2}"/>
+        <inertia ixx="0.1" ixy="0" ixz="0"
+                 iyy="0.1" iyz="0"
+                 izz="0.01"/>
+      </inertial>
+      <visual>
+        <origin xyz="0.0 0.0 ${-leg_length/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${leg_radius}" length="${leg_length}"/>
+        </geometry>
+        <material name="brown"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 ${-leg_length/2}" rpy="0.0 0.0 0.0"/>
+        <geometry>
+          <cylinder radius="${leg_radius}" length="${leg_length}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${prefix}leg4_joint" type="fixed">
+      <parent link="${prefix}top_link"/>
+      <origin xyz="-${width/2 - leg_radius} ${depth/2 - leg_radius} ${-table_top_thickness}"
+              rpy="0 0 0"/>
+      <child link="${prefix}leg4_link"/>
+    </joint>
+    <link name="${prefix}leg4_link">
+      <inertial>
+        <mass value="1.0"/>
+        <origin xyz="0 0 ${-leg_length/2}"/>
+        <inertia ixx="0.1" ixy="0" ixz="0"
+                 iyy="0.1" iyz="0"
+                 izz="0.01"/>
+      </inertial>
+      <visual>
+        <origin xyz="0.0 0.0 ${-leg_length/2}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder radius="${leg_radius}" length="${leg_length}"/>
+        </geometry>
+        <material name="brown"/>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 ${-leg_length/2}" rpy="0.0 0.0 0.0"/>
+        <geometry>
+          <cylinder radius="${leg_radius}" length="${leg_length}"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+
+</robot>

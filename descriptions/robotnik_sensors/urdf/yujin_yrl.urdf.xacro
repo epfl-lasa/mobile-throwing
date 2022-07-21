@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot name="sensor_yujin_yrl" xmlns:xacro="http://wiki.ros.org/xacro">
+
+
+  <xacro:macro name="sensor_yujin_yrl" params="prefix parent prefix_topic:='front_laser' *origin min_angle:=-2.3562 max_angle:=2.3562 gpu:=^|true">
+    <!--arg name="namespace" value="$(arg namespace)"/-->
+
+    <joint name="${prefix}_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${prefix}_base_link"/>
+    </joint>
+
+
+    <link name="${prefix}_base_link">
+      <collision>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.010 0.010 0.010"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+        <geometry>
+            <mesh filename="package://robotnik_sensors/meshes/yujin_yrl.stl"/>
+        </geometry>
+      </visual>
+
+      <inertial>
+        <origin xyz="0.0 0 0.035" rpy="0 0 0" />
+        <mass value="0.400" />
+        <xacro:solid_cuboid_inertia m="0.400" w="0.05" h="0.05" d="0.07" />
+      </inertial>
+    </link>
+
+    <link name="${prefix}_link">
+    </link>
+    
+    <joint name="${prefix}_joint" type="fixed">
+      <parent link="${prefix}_base_link"/>
+      <child link="${prefix}_link"/>
+      <origin xyz="0.00 0.0 0.07" rpy="0 0 0"/>
+    </joint>
+
+    <!-- TODO: Simulate sensor -->
+
+  </xacro:macro>
+
+</robot>

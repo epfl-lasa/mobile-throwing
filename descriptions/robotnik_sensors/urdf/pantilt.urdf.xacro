@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="sensor_axis">
+  <xacro:property name="ptz_joint_effort_limit" value="100.0"/>
+  <xacro:property name="ptz_joint_velocity_limit" value="100.0"/>
+  <xacro:property name="ptz_joint_friction" value="0.1"/>
+  <xacro:property name="ptz_joint_damping" value="0.1"/>
+  <xacro:property name="ptz_mechanical_reduction" value="1.0"/>
+  <xacro:macro name="sensor_pantilt" params="prefix parent *origin far:=^|8.0 near:=^|0.05">
+    
+    <joint name="${prefix}_joint" type="fixed">
+      <axis xyz="0 1 0"/>
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${prefix}_base_link"/>
+    </joint>
+    
+    <link name="${prefix}_base_link">
+      <inertial>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+      </inertial>
+      <!--visual>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <material name="axis_color">
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+        <geometry>
+          <mesh filename="package://robotnik_sensors/meshes/camera_axis_p5514.stl" scale="1.0 1.0 1.0"/>
+        </geometry>
+      </visual-->
+      <!--collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robotnik_sensors/meshes/camera_axis_p5514.stl" scale="1.0 1.0 1.0"/>
+        </geometry>
+      </collision-->
+    </link>
+    
+    <joint name="pan" type="revolute">
+      <axis xyz="0 0 1"/>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 -1.134"/>
+      <!-- check the displacement -->
+      <parent link="${prefix}_base_link"/>
+      <child link="pan_link"/>
+      <limit effort="${ptz_joint_effort_limit}" velocity="${ptz_joint_velocity_limit}" lower="-3.1415" upper="3.1415"/>
+      <joint_properties damping="${ptz_joint_damping}" friction="{ptz_joint_friction}"/>
+    </joint>
+    
+    <link name="pan_link">
+      <inertial>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+      </inertial>
+    </link>
+
+    <transmission name="${prefix}_pan_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="pan">
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="pan_motor">
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        <mechanicalReduction>${ptz_mechanical_reduction}</mechanicalReduction>
+      </actuator>
+    </transmission>
+    
+    <joint name="tilt" type="revolute">
+      <axis xyz="0 1 0"/>
+      <origin xyz="0.0 0.0 0.049"/>
+      <parent link="pan_link"/>
+      <child link="tilt_link"/>
+      <limit effort="${ptz_joint_effort_limit}" velocity="${ptz_joint_velocity_limit}" lower="-1.5708" upper="1.5708"/>
+      <joint_properties damping="${ptz_joint_damping}" friction="{ptz_joint_friction}"/>
+    </joint>
+    
+    <link name="tilt_link">
+      <inertial>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+      </inertial>
+    </link>
+    
+    <transmission name="${prefix}_tilt_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="tilt">
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="tilt_motor">
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        <mechanicalReduction>${ptz_mechanical_reduction}</mechanicalReduction>
+      </actuator>
+    </transmission>
+    
+  </xacro:macro>
+
+</robot>

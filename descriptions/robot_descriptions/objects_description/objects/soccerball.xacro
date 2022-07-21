@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<robot name="soccerball" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:macro name="soccerball" params="connected_to:='' xyz:='0 0 0' radius=0.5">
+    <xacro:property name="scale" value="${radius / 0.5}"/>
+
+    <xacro:if value="${connected_to == ''}">
+      <link name="world"/>
+      <xacro:property name="base_frame_name" value="world"/>
+    </xacro:if>
+    <xacro:unless value="${connected_to == ''}">
+      <xacro:property name="base_frame_name" value="${connected_to}"/>
+    </xacro:unless>
+
+    <link name="${base_frame_name}"/>
+    <joint name="ball_to_${base_frame_name}" type="fixed">
+      <parent link="${base_frame_name}"/>
+      <child link="ball"/>
+      <origin xyz="${xyz}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="ball">
+      <contact>
+        <rolling_friction value="0.001"/>
+        <spinning_friction value="0.001"/>
+        <restitution value="0.9"/>
+      </contact>
+      <inertial>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <!--        <mass value="${4.1888 * radius * radius * radius * 90}"/>-->
+        <mass value="10"/>
+        <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+      </inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://objects_description/meshes/visual/soccerball.obj"
+                scale="${scale} ${scale} ${scale}"/>
+        </geometry>
+        <material name="white">
+          <color rgba="1 1 1 1"/>
+          <specular rgb="11 1 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <sphere radius="${radius}"/>
+        </geometry>
+      </collision>
+    </link>
+
+  </xacro:macro>
+</robot>

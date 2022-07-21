@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:macro name="depth_camera"
+    params="prefix fps baseline hfov width height format near far  prefix_topic:='zed_node'">
+
+    <gazebo reference="${prefix}_base_link">
+      <visual>  
+        <material>  
+          <ambient>0.35 0.35 0.35 1.0</ambient>  
+          <diffuse>0.350754 0.350754 0.350754 1.0</diffuse>  
+          <specular>0.308273 0.3508273 0.3508273 1.0</specular>  
+          <emissive>0.0 0.0 0.0 0.0</emissive>  
+        </material>  
+      </visual>  
+      <sensor type="depth" name="depth_camera">
+        <update_rate>${fps}</update_rate>
+        <camera>
+          <horizontal_fov>${hfov}</horizontal_fov>
+          <image>
+            <width>${width}</width>
+            <height>${height}</height>
+            <format>${format}</format>
+          </image>
+          <clip>
+            <near>${near}</near>
+            <far>${far}</far>
+          </clip>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.007</stddev>
+          </noise>
+        </camera>
+        <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+          <baseline>${baseline}</baseline>
+          <alwaysOn>true</alwaysOn>
+          <!-- Keep this zero, update_rate in the parent <sensor> tag
+            will control the frame rate. -->
+          <updateRate>0.0</updateRate>
+          <cameraName>${prefix_topic}</cameraName>
+          <imageTopicName> rgb/image_raw</imageTopicName>
+          <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>depth/image_raw</depthImageTopicName>
+          <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+          <pointCloudTopicName>depth/points</pointCloudTopicName>
+          <frameName>/${prefix}_depth_optical_frame</frameName>
+          <pointCloudCutoff>${near}</pointCloudCutoff>
+          <pointCloudCutoffMax>${far}</pointCloudCutoffMax>
+          <distortionK1>0</distortionK1>
+          <distortionK2>0</distortionK2>
+          <distortionK3>0</distortionK3>
+          <distortionT1>0</distortionT1>
+          <distortionT2>0</distortionT2>
+          <CxPrime>0</CxPrime>
+          <Cx>0</Cx>
+          <Cy>0</Cy>
+          <focalLength>0</focalLength>
+          <hackBaseline>0</hackBaseline>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="stereolabs_zed2"
+    params="prefix:=zed parent *origin model:=zed format:=R8G8B8 near:=0.5 far:=30  prefix_topic:=zed_node">
+
+    <xacro:if value="${model == 'zed'}">
+        <xacro:property name="baseline" value="0.12" />
+    </xacro:if>
+    <xacro:if value="${model == 'zedm'}">
+        <xacro:property name="baseline" value="0.06" />
+    </xacro:if>
+    <xacro:if value="${model == 'zed2'}">
+        <xacro:property name="baseline" value="0.12" />
+    </xacro:if>
+
+    <joint name="${prefix}_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${prefix}_base_link" />
+    </joint>
+
+    <link name="${prefix}_base_link">
+       <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robotnik_sensors/meshes/${model}.stl"/>
+        </geometry>
+        <material name="light_zed_grey">
+          <color rgba="0.35 0.35 0.35 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://robotnik_sensors/meshes/${model}.stl" />
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.135" />
+        <origin xyz="0 0 0" />
+        <xacro:solid_cuboid_inertia m="0.135" w="0.033" h="0.175" d="0.03" />
+      </inertial>
+    </link>
+
+   <!-- Left camera -->
+    <joint name="${prefix}_rgb_left_joint" type="fixed">
+      <origin xyz="0.0 0.06 0.0" rpy="0.0 0.0 0.0" />
+      <parent link="${prefix}_base_link" />
+      <child link="${prefix}_left_rgb_frame" />
+    </joint>
+
+    <link name="${prefix}_left_rgb_frame"/>
+
+    <joint name="${prefix}_rgb_left_optical_joint" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="${-M_PI/2} 0.0 ${-M_PI/2}" />
+      <parent link="${prefix}_left_rgb_frame" />
+      <child link="${prefix}_left_rgb_optical_frame" />
+    </joint>
+
+    <link name="${prefix}_left_rgb_optical_frame"/>
+
+    <!-- Right camera-->
+    <joint name="${prefix}_rgb_right_joint" type="fixed">
+      <origin xyz="0.0 -0.06 0.0" rpy="0.0 0.0 0.0" />
+      <parent link="${prefix}_base_link" />
+      <child link="${prefix}_right_rgb_frame" />
+    </joint>
+
+    <link name="${prefix}_right_rgb_frame"/>
+
+    <joint name="${prefix}_rgb_right_optical_joint" type="fixed">
+      <origin xyz="0.0 0 0.0" rpy="${-M_PI/2} 0.0 ${-M_PI/2}" />
+      <parent link="${prefix}_right_rgb_frame" />
+      <child link="${prefix}_right_rgb_optical_frame" />
+    </joint>
+
+    <link name="${prefix}_right_rgb_optical_frame"/>
+
+    <!-- Depth image-->
+    <joint name="${prefix}_depth_joint" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+      <parent link="${prefix}_base_link" />
+      <child link="${prefix}_depth_frame" />
+    </joint>
+
+    <link name="${prefix}_depth_frame"/>
+
+    <joint name="${prefix}_depth_optical_joint" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="${-M_PI/2} 0.0 ${-M_PI/2}" />
+      <parent link="${prefix}_depth_frame" />
+      <child link="${prefix}_depth_optical_frame" />
+    </joint>
+
+    <link name="${prefix}_depth_optical_frame"/>
+
+      <xacro:depth_camera
+        prefix="${prefix}"
+        hfov="1.2217"
+        baseline="${baseline}"
+        fps="30"
+        width="1280"
+        height="720"
+        format="${format}"
+        near="${near}"
+        far="${far}"
+        prefix_topic="${prefix_topic}"
+        />
+  </xacro:macro>
+
+  <xacro:macro name="sensor_zed2" params="prefix:=zed2 parent *origin model:=zed2  prefix_topic:=zed_node" >
+    <stereolabs_zed2 prefix="${prefix}" parent="${parent}" model="${model}" prefix_topic="${prefix_topic}">
+      <xacro:insert_block name="origin" />
+    </stereolabs_zed2>
+  </xacro:macro>
+
+</robot>

@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+
+  <!-- ros control plugin -->
+  <xacro:macro name="ros_control">
+    <gazebo>
+      <plugin name="ros_control" filename="libgazebo_ros_control.so">
+		    <robotParam>robot_description</robotParam>
+        <controlPeriod>0.001</controlPeriod>
+	      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+		    <legacyModeNS>true</legacyModeNS>
+      </plugin>
+    </gazebo>
+	</xacro:macro>
+
+	<!-- skid steering plugin -->
+	<xacro:macro name="skid_steering" params="prefix publish_tf">
+    <gazebo>
+      <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+			<!--<robotNamespace>/summit_xl</robotNamespace>-->
+		    <updateRate>50.0</updateRate>
+		    <leftFrontJoint>${prefix}front_left_wheel_joint</leftFrontJoint>
+		    <rightFrontJoint>${prefix}front_right_wheel_joint</rightFrontJoint>
+		    <leftRearJoint>${prefix}back_left_wheel_joint</leftRearJoint>
+		    <rightRearJoint>${prefix}back_right_wheel_joint</rightRearJoint>
+		    <!-- wheelSeparation>0.566</wheelSeparation --> <!-- real parameter value -->
+		    <wheelSeparation>0.462</wheelSeparation> <!-- works a bit better in Gazebo -->
+		    <wheelDiameter>0.22</wheelDiameter>
+		    <robotBaseFrame>${prefix}base_footprint</robotBaseFrame>
+		    <torque>50</torque>
+		    <commandTopic>robotnik_base_control/cmd_vel</commandTopic>
+		    <odometryTopic>robotnik_base_control/odom</odometryTopic>
+		    <odometryFrame>${prefix}odom</odometryFrame>
+		    <broadcastTF>${publish_tf}</broadcastTF>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="omni_steering" params="prefix publish_tf">
+		<gazebo>
+	    <plugin name="omni_steering" filename="libgazebo_ros_planar_move.so">
+	      <commandTopic>robotnik_base_control/cmd_vel</commandTopic>
+	      <odometryTopic>robotnik_base_control/odom</odometryTopic>
+	      <odometryFrame>${prefix}odom</odometryFrame>
+	      <odometryRate>50.0</odometryRate>
+	      <robotBaseFrame>${prefix}base_footprint</robotBaseFrame>
+	      <publishTF>${publish_tf}</publishTF>
+		  <enableYAxis>false</enableYAxis>
+	    </plugin>
+	  </gazebo>
+  </xacro:macro>
+
+  	<xacro:macro name="skid_steering" params="prefix publish_tf">
+		<gazebo>
+			<plugin name="skid_steering" filename="libgazebo_ros_planar_move.so">
+			<commandTopic>robotnik_base_control/cmd_vel</commandTopic>
+			<odometryTopic>robotnik_base_control/odom</odometryTopic>
+			<odometryFrame>${prefix}odom</odometryFrame>
+			<odometryRate>50.0</odometryRate>
+			<robotBaseFrame>${prefix}base_footprint</robotBaseFrame>
+			<publishTF>${publish_tf}</publishTF>
+			<enableYAxis>false</enableYAxis>
+			</plugin>
+		</gazebo>
+  	</xacro:macro>
+
+  <xacro:macro name="ros_force_based_move" params="publish_tf prefix">
+	  <gazebo>
+		 <plugin name="ros_force_based_move" filename="librobotnik_force_based_move.so">
+			 <commandTopic>robotnik_base_control/cmd_vel</commandTopic>
+			 <odometryTopic>robotnik_base_control/odom</odometryTopic>
+	         <odometryFrame>${prefix}odom</odometryFrame>
+			 <yaw_velocity_p_gain>10000.0</yaw_velocity_p_gain>
+			 <x_velocity_p_gain>10000.0</x_velocity_p_gain>
+			 <y_velocity_p_gain>10000.0</y_velocity_p_gain>
+			 <robotBaseFrame>${prefix}base_footprint</robotBaseFrame>
+			 <commandWatchdog>1</commandWatchdog>
+			 <odometryRate>50.0</odometryRate>
+			 <publishOdometryTf>${publish_tf}</publishOdometryTf>
+		 </plugin>
+	  </gazebo>
+  </xacro:macro>
+
+  <gazebo reference="base_footprint">
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+
+</robot>

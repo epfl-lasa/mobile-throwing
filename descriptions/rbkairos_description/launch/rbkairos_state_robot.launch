@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_id" default="$(optenv ROBOT_ID robot)"/>
+  <arg name="prefix" default="$(arg robot_id)_"/>
+  <arg name="robot_model"  default="rbkairos_base.urdf.xacro"  doc="Different robot versions: ('')"/>
+  <arg name="has_arm"  default="true"/>
+  <arg name="ros_planar_move_plugin" default="false" />
+  <arg name="use_gpu_for_simulation" default="true" />
+  <arg name="load_kinematics_file" default="false"/>
+
+  <!-- Load the URDF into ROS parameter server -->
+  <arg name="urdf_file" default="$(find xacro)/xacro '$(find rbkairos_description)/robots/$(arg robot_model)' prefix:=$(arg prefix) ros_planar_move_plugin:=$(arg ros_planar_move_plugin) has_arm:=$(arg has_arm) use_gpu_for_simulation:=$(arg use_gpu_for_simulation) load_kinematics_file:=$(arg load_kinematics_file) --inorder" />
+  <param name="robot_description" command="$(arg urdf_file)" />
+
+
+  <!-- Combine joint values -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
+	<remap from="/joint_states" to="joint_states"/>
+  </node>
+  
+</launch>

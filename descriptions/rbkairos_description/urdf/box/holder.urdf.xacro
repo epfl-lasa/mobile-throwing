@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<robot name="holder" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:include filename="$(find rbkairos_description)/urdf/inertia.urdf.xacro" />
+
+  <!--xacro:arg name="prefix" default="box_"/>
+  <xacro:property name="prefix" value="$(arg prefix)" /-->
+
+  <xacro:macro name="holder" params="prefix parent *origin">
+
+    <joint name="${prefix}holder_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${prefix}holder_base_link"/>
+    </joint>
+
+    <link name="${prefix}holder_base_link">
+    </link>
+
+    <joint name="${prefix}holder_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <parent link="${prefix}holder_base_link"/>
+      <child link="${prefix}holder_link"/>
+    </joint>
+
+    <link name="${prefix}holder_link">
+      <inertial>
+        <mass value="0.1" />
+        <origin xyz="0 0.011 0" />
+        <solid_cuboid_inertia m="0.1" h="0.022" d="0.225" w="0.31"/>
+      </inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rbkairos_description/urdf/box/meshes/box_holder.stl"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rbkairos_description/urdf/box/meshes/box_holder.stl"/>
+        </geometry>
+      </collision>  
+    </link>
+    
+    <joint name="${prefix}holder_approach_joint" type="fixed">
+      <origin rpy="3.1415 0 0" xyz="0 0 0.5"/>
+      <parent link="${prefix}holder_link"/>
+      <child link="${prefix}holder_approach_link"/>
+    </joint>
+
+    <link name="${prefix}holder_approach_link"/>
+
+    <gazebo reference="${prefix}holder_link">
+      <visual>  
+        <material>  
+          <ambient>0.0 0.0 0.0 1.0</ambient>  
+          <diffuse>0.2 0.2 0.2 1.0</diffuse>  
+          <specular>0.584313725 0.647058824 0.650980392 1.0</specular>  
+          <emissive>0.0 0.0 0.0 0.0</emissive>  
+        </material>  
+      </visual>  
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package>
+  <name>objects_description</name>
+  <version>0.0.0</version>
+  <description>This package contains the URDF and meshes describing objects for simulation.</description>
+  <maintainer email="dominic.reber@epfl.ch">Dominic Reber</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>joint_state_publisher_gui</run_depend>
+  <run_depend>rviz</run_depend>
+</package>

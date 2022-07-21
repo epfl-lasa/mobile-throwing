@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot name="structure" xmlns:xacro="http://www.ros.org/wiki/xacro">
+		
+  <xacro:macro name="extension_ur16e" params="prefix parent *origin">
+
+ <!--CONTAINER -->
+    <joint name="${prefix}_extension_ur16e_joint" type="fixed">
+	    <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${prefix}_extension_ur16e_link"/>
+    </joint>
+
+    <link name="${prefix}_extension_ur16e_link">
+	       <visual>
+	      <geometry>
+	        <mesh filename="package://rbkairos_description/meshes/structures/extension_ur16e.stl"/>
+	      </geometry>
+	    </visual>
+	    <collision>
+	      <origin rpy="0 0 0" xyz="0.0 0 0"/>
+	      <geometry>
+          <!--box size="0.12 0.1 0.1" /-->
+	        <mesh filename="package://rbkairos_description/meshes/structures/extension_ur16e.stl"/>
+	      </geometry>
+	    </collision>
+	  </link>
+      
+  </xacro:macro>
+
+</robot>
+
+
+

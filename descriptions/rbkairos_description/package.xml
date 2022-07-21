@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+  <name>rbkairos_description</name>
+  <version>1.1.2</version>
+  <description> URDF description of the RB Kairos robot</description>
+
+  <url type="website">http://ros.org/wiki/rbkairos_description</url>
+  <url type="repository">https://github.com/RobotnikAutomation/rbkairos_common.git</url>
+  <url type="bugtracker">https://github.com/RobotnikAutomation/rbkairos_common/issues</url>
+
+  <author email="rguzman@robotnik.es">Roberto Guzmán</author>
+  <author email="rnavarro@robotnik.es">Román Navarro</author>
+  <maintainer email="aarnal@robotnik.es">Álex Arnal</maintainer>
+  <maintainer email="mmillet@robotnik.es">Marta Millet</maintainer>
+  <maintainer email="jgomez@robotnik.es">Jose Gómez</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roslaunch</build_depend>
+  <build_depend>urdf</build_depend>
+  <build_depend>xacro</build_depend>
+  <build_depend>robotnik_sensors</build_depend>
+  <build_depend>ur_description</build_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>urdf</run_depend>
+  <run_depend>xacro</run_depend>
+  <run_depend>robotnik_sensors</run_depend>
+  <run_depend>ur_description</run_depend>
+  <run_depend>egh_gripper_description</run_depend>
+</package>

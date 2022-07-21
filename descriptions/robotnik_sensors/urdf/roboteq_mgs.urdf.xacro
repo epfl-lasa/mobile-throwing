@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot name="roboteq_mgs" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:macro name="roboteq_mgs" params="prefix parent *origin">
+
+		<joint name="${prefix}_base_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${prefix}_base_link" />
+    </joint>
+
+    <link name="${prefix}_base_link">
+      <inertial>
+        <mass value="0.255" />
+        <origin xyz="0 0 0" />
+        <xacro:solid_cuboid_inertia m="0.255" w="0.025" h="0.165" d="0.025" />
+      </inertial>
+    </link>
+
+  </xacro:macro>
+
+</robot>

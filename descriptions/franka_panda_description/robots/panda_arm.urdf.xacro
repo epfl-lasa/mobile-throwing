@@ -1,0 +1,17 @@
+<?xml version='1.0' ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
+    <xacro:arg name="load_gazebo" default="false"/>
+    <xacro:arg name="arm_id" default="panda"/>
+    <xacro:arg name="connected_to" default=""/>
+    <xacro:arg name="xyz" default="0 0 0"/>
+    <xacro:arg name="rpy" default="0 0 0"/>
+    <xacro:include filename="$(find franka_panda_description)/robots/panda_arm.xacro"/>
+    
+    <xacro:if value="$(arg load_gazebo)">  
+        <xacro:panda_arm arm_id="$(arg arm_id)" connected_to="$(arg connected_to)" xyz="$(arg xyz)" rpy="$(arg rpy)" in_gazebo="true" />
+    </xacro:if>
+
+    <xacro:unless value="$(arg load_gazebo)">  
+        <xacro:panda_arm arm_id="$(arg arm_id)" connected_to="$(arg connected_to)" xyz="$(arg xyz)" rpy="$(arg rpy)" />
+    </xacro:unless>
+</robot>

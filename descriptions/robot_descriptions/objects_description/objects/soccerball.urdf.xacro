@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot name="soccerball" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:arg name="connected_to" default=""/>
+  <xacro:arg name="xyz" default="'0 0 0'"/>
+  <xacro:arg name="radius" default="0.5"/>
+
+  <xacro:include filename="$(find objects_description)/objects/soccerball.xacro"/>
+
+  <xacro:soccerball connected_to="$(arg connected_to)" xyz="$(arg xyz)" radius="$(arg radius)"/>
+
+</robot>

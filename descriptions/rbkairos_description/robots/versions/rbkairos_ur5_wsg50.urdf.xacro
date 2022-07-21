@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<robot name="rbkairos" xmlns:xacro="http://wiki.ros.org/xacro">
+
+
+  <!-- ***************** -->
+  <!-- Imported elements -->
+  <!-- ***************** -->
+
+  <!-- First we import all posible elements defined in the urdf.xacro files. All these elements are defined as macro:xacros -->
+
+  <!-- Import summit XL base elements -->
+  <xacro:include filename="$(find rbkairos_description)/robots/versions/rbkairos_ur5_wsg50_base.urdf.xacro"/>
+
+  <!-- Include UR-5 ARM -->
+  <xacro:include filename="$(find ur_description)/urdf/inc/ur5_macro.xacro" />
+
+  <!-- Import Schunk WSG-50 -->
+  <xacro:include filename="$(find rbkairos_description)/urdf/structures/wsg_50_support.urdf.xacro"/>
+  <xacro:include filename="$(find wsg_50_simulation)/urdf/wsg_50.urdf.xacro"/>
+
+  <!-- Import realsense wrist support-->
+  <xacro:include filename="$(find rbkairos_description)/urdf/structures/realsense_wrist_support.urdf.xacro"/>
+
+  <!-- Flag to select the high or low quality model -->
+  <xacro:property name="hq" value="true" />
+
+  <xacro:arg name="prefix" default="robot_"/>
+  <xacro:arg name="ros_planar_move_plugin" default="false"/>
+
+  <xacro:arg name="load_kinematics_file" default="false"/> <!-- Necesarry for ur_description compatible with official ur drivers-->
+
+  <xacro:property name="arm_position_x" value="0.1883"/>
+  <xacro:property name="arm_position_y" value="0"/>
+  <xacro:property name="arm_position_z" value="0.38212"/>
+  <xacro:property name="arm_orientation_r" value="0"/>
+  <xacro:property name="arm_orientation_p" value="0"/>
+  <xacro:property name="arm_orientation_y" value="${pi}"/>
+  
+  <xacro:macro name="rbkairos_ur5_wsg50" params="prefix publish_bf hq load_kinematics_file">
+
+    <!-- *************** -->
+    <!-- Robots Elements -->
+    <!-- *************** -->
+
+    <!-- Here we create the robot elements using the xacro:macros imported at the beggining of this file -->
+
+    <!-- RBKAIROS base -->
+    <xacro:rbkairos_base prefix="$(arg prefix)" publish_bf="true" hq="true"/>
+
+
+    <!-- UR-5 ARM -->
+    <xacro:ur5_robot prefix="$(arg prefix)arm_" >
+    </xacro:ur5_robot>
+
+    <joint name="$(arg prefix)arm_base_joint" type="fixed">
+      <origin xyz="${arm_position_x} ${arm_position_y} ${arm_position_z}" rpy="${arm_orientation_r} ${arm_orientation_p} ${arm_orientation_y}"/>
+      <parent link="$(arg prefix)base_link" />
+      <child link="$(arg prefix)arm_base_link" />
+    </joint>
+
+    <!-- Schunk Support -->
+    <xacro:wsg50_support prefix="$(arg prefix)wsg50_support" parent="$(arg prefix)wrist_rgbd_support_link">
+      <origin xyz="0.0 -0.01 0.007" rpy="0 0 0.0"/>
+    </xacro:wsg50_support>
+
+    <!-- Schunk WSG-50 -->
+    <xacro:wsg_50_xacro name="$(arg prefix)wsg50" parent="$(arg prefix)wsg50_support_link" finger_length="0.023" finger_tip="0">
+      <origin xyz="0.0 0.01 0.005" rpy="0 0 ${pi/2}"/>
+    </xacro:wsg_50_xacro>
+
+    <!-- Intel Realsense wrist support-->
+    <xacro:realsense_wrist_support prefix="$(arg prefix)wrist_rgbd_support" parent="$(arg prefix)arm_tool0">
+      <origin xyz="0.0 0.0 0.00" rpy="0 0 0.0"/>
+    </xacro:realsense_wrist_support>
+
+    <!-- Intel Realsense -->
+    <xacro:sensor_r430 prefix="$(arg prefix)wrist_rgbd" parent="$(arg prefix)arm_tool0" prefix_topic="wrist_rgbd">
+      <origin xyz="0.0515 0.0 0.065" rpy="${pi} ${-pi/2} 0"/>
+    </xacro:sensor_r430>
+
+  <!-- Gazebo ros control pluggins -->
+  <xacro:ros_control/>
+  <xacro:if value="$(arg ros_planar_move_plugin)">
+    <xacro:omni_steering prefix="$(arg prefix)" publish_tf="true"/>
+  </xacro:if>
+
+  </xacro:macro>
+
+
+  <xacro:rbkairos_ur5_wsg50 prefix="$(arg prefix)" publish_bf="true" hq="true" load_kinematics_file="$(arg load_kinematics_file)"/>
+
+
+
+</robot>

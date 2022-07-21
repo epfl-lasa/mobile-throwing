@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<robot name="box" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:include filename="$(find rbkairos_description)/urdf/inertia.urdf.xacro" />
+
+  <xacro:arg name="prefix" default="box_"/>
+  <xacro:property name="prefix" value="$(arg prefix)" />
+
+  <link name="${prefix}base_link">
+  </link>
+
+  <joint name="${prefix}joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="${prefix}base_link"/>
+    <child link="${prefix}body_box_link"/>
+  </joint>
+
+  <link name="${prefix}body_box_link">
+    <inertial>
+      <mass value="5" />
+      <origin xyz="0 0 0.05" />
+      <solid_cuboid_inertia m="5" h="0.2" d="0.1" w="0.3"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rbkairos_description/urdf/box/meshes/box_base.stl"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rbkairos_description/urdf/box/meshes/box_base.stl"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="${prefix}handle_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.1"/>
+    <parent link="${prefix}body_box_link"/>
+    <child link="${prefix}handle_link"/>
+  </joint>
+
+  <link name="${prefix}handle_link">
+    <inertial>
+      <mass value="0.1" />
+      <origin xyz="0 0 0" />
+      <solid_cuboid_inertia m="0.1" h="0.2" d="0.01" w="0.3"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rbkairos_description/urdf/box/meshes/handle.stl"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://rbkairos_description/urdf/box/meshes/handle.stl"/>
+      </geometry>
+    </collision>  
+  </link>
+
+  <joint name="${prefix}grasping_joint" type="fixed">
+    <origin rpy="3.141592 0 0" xyz="0 0 0.25"/>
+    <parent link="${prefix}body_box_link"/>
+    <child link="${prefix}grasping_link"/>
+  </joint>
+
+  <link name="${prefix}grasping_link"/>
+
+      <gazebo reference="${prefix}body_box_link">
+      <visual>  
+        <material>  
+          <ambient>0.0 0.0 0.0 1.0</ambient>  
+          <diffuse>0.2 0.2 0.2 1.0</diffuse>  
+          <specular>0.584313725 0.647058824 0.650980392 1.0</specular>  
+          <emissive>0.0 0.0 0.0 0.0</emissive>  
+        </material>  
+      </visual>  
+    </gazebo>
+      <gazebo reference="${prefix}handle_link">
+      <visual>  
+        <material>  
+          <ambient>0.0 0.0 0.0 1.0</ambient>  
+          <diffuse>0.2 0.2 0.2 1.0</diffuse>  
+          <specular>0.584313725 0.647058824 0.650980392 1.0</specular>  
+          <emissive>0.0 0.0 0.0 0.0</emissive>  
+        </material>  
+      </visual>  
+    </gazebo>
+
+</robot>

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot name="structure" xmlns:xacro="http://www.ros.org/wiki/xacro">
+        
+  <xacro:macro name="arm_pedestal" params="prefix parent *origin radius:=0.09 length:=0.4">
+
+    <joint name="${prefix}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${prefix}_link"/>
+    </joint>
+
+    <link name="${prefix}_link">
+      <visual>
+        <material name="black_metal">
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+        <origin xyz="0 0 ${length/2}" rpy="0.0 0 0"/>
+        <geometry>
+          <cylinder radius="${radius}" length="${length}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${length/2}" rpy="0.0 0 0"/>
+        <geometry>
+          <cylinder radius="${radius}" length="${length}"/>
+        </geometry>
+      </collision>
+      </link>
+      
+  </xacro:macro>
+
+</robot>
+
+
+

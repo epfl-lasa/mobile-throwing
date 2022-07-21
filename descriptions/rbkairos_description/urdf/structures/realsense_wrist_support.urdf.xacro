@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<robot name="structure" xmlns:xacro="http://www.ros.org/wiki/xacro">
+		
+  <xacro:macro name="realsense_wrist_support" params="prefix parent *origin">
+
+    <joint name="${prefix}_joint" type="fixed">
+	    <xacro:insert_block name="origin"/>
+        <parent link="${parent}"/>
+        <child link="${prefix}_link"/>
+    </joint>
+
+    <link name="${prefix}_link">
+      <inertial>
+        <origin xyz="0 0 0.5" rpy="0 0 0"/>
+        <mass value="1"/>
+        <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+      </inertial>
+
+      <visual>
+        <origin xyz="0.0105 0.0 0.001" rpy="0 0 0" />
+        <geometry>
+          <box size="0.084 0.063 0.002" />
+        </geometry>
+        <material name="Grey">
+          <color rgba="0.7 0.7 0.7 1.0"/>
+          </material>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0105 0.0 0.001" rpy="0 0 0" />
+        <geometry>
+          <box size="0.084 0.063 0.002" />
+        </geometry>
+      </collision>
+
+    </link>
+
+    <joint name="${prefix}_second_joint" type="fixed">
+      <origin xyz="0.0515 0.0 0.001" rpy="0 0.0 0.0" />
+      <parent link="${prefix}_link"/>
+      <child link="${prefix}_second_link"/>
+    </joint>
+
+    <link name="${prefix}_second_link">
+      <inertial>
+        <origin xyz="0 0 0.5" rpy="0 0 0"/>
+        <mass value="1"/>
+        <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+      </inertial>
+
+      <visual>
+        <origin xyz="0.0 0.0 0.019" rpy="0.0 ${PI/2} 0.0" />
+        <geometry>
+          <box size="0.036 0.063 0.002" />
+        </geometry>
+        <material name="Grey">
+          <color rgba="0.7 0.7 0.7 1.0"/>
+          </material>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 0.021" rpy="0.0 ${PI/2} 0.0" />
+        <geometry>
+          <box size="0.04 0.063 0.002" />
+        </geometry>
+      </collision>
+
+    </link>
+
+    <gazebo reference="${prefix}_link">
+      <material>Gazebo/Black</material>
+      <gravity>true</gravity>
+    </gazebo>
+      
+  </xacro:macro>
+
+</robot>
+
+
+

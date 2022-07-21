@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <arg name="prefix" default=""/>
+  
+  <!-- Load the URDF into ROS parameter server -->
+
+<!--  <arg name="urdf_file" default="$(find xacro)/xacro '$(find rbkairos_description)/robots/versions/rbkairos_ur5_egh.urdf.xacro' prefix:=$(arg prefix) ros_planar_move_plugin:=false &#45;&#45;inorder" />-->
+  <arg name="urdf_file" default="$(find xacro)/xacro '$(find rbkairos_description)/robots/rbkairos_base.urdf.xacro' prefix:=$(arg prefix) ros_planar_move_plugin:=false --inorder" />
+<!--  <arg name="urdf_file" default="$(find xacro)/xacro '$(find rbkairos_description)/robots/rbkairos_panda.urdf.xacro' prefix:=$(arg prefix) ros_planar_move_plugin:=false &#45;&#45;inorder" />-->
+
+
+  <param name="robot_description" command="$(arg urdf_file)" />
+
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find rbkairos_description)/rviz/config.rviz"/>
+
+  <!-- send fake joint values -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+
+  <!-- Combine joint values -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  
+</launch>
