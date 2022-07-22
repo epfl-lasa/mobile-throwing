@@ -1,6 +1,8 @@
 # Mobile Manipulator Throwing
 
-Code for our paper A Solution for Mobile Manipulator Throwing 
+Code for our paper
+
+[A Solution to Adaptive Mobile Manipulator Throwing](https://arxiv.org/abs/2207.10629)
 
 accepted in International Conference on Intelligent Robots and Systems (IROS) 2022.
 
